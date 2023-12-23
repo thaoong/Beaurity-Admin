@@ -3,7 +3,7 @@ import { AdminCosmeticService } from '../services/admin-cosmetic.service';
 import { AdminCategoryService } from '../services/admin-category.service';
 import { AdminCustomerService } from '../services/admin-customer.service';
 import { AdminOrderService } from '../services/admin-order.service';
-import { Chart } from 'chart.js/dist';
+import { Chart } from 'chart.js/auto';
 import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 
 @Component({

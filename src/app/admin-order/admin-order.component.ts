@@ -31,11 +31,11 @@ export class AdminOrderComponent {
     return this.result = data.length
   }
 
-  deleteOrder(_id: any) {
+  deleteOrder(_id: string) {
     if (window.confirm('Bạn có chắc muốn xóa đơn hàng này?')) {
       this._service.deleteOrder(_id).subscribe(
         {
-          next: () => { 
+          next: (data) => { 
             location.reload(); 
           },
           error: (err) => { this.errMessage = err }

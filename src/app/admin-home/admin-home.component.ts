@@ -4,7 +4,8 @@ import { AdminCategoryService } from '../services/admin-category.service';
 import { AdminCustomerService } from '../services/admin-customer.service';
 import { AdminOrderService } from '../services/admin-order.service';
 // import * as Chart from 'chart.js';
-import { Chart } from 'chart.js/auto'; 
+import { Chart } from 'chart.js';
+import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 
 @Component({
   selector: 'app-admin-home',
@@ -23,7 +24,58 @@ export class AdminHomeComponent {
   orders: any;
   uncompletedOrders: any;
   errMessage: string = '';
-  
+
+  loadData() {
+    this._service.getCosmetics().subscribe({
+      next: (data) => {
+        // Lấy danh sách các Cosmetics
+        this.cosmetics = data;
+
+        this._service.getCosmeticCategory(this.categories).subscribe({
+          next: (categoryData) => {
+            // Lấy danh sách các Categories
+            this.categories = categoryData;
+
+            // Nếu có dữ liệu, vẽ biểu đồ
+            if (this.cosmetics && this.cosmetics.length > 0) {
+              this.createChart();
+            }
+          },
+          error: (err) => {
+            this.errMessage = err;
+          },
+        });
+      },
+      error: (err) => {
+        this.errMessage = err;
+      },
+    });
+  }
+
+  // getDataAndDrawChart() {
+  //   // Use forkJoin to combine multiple observables
+  //   forkJoin([
+  //     this._service.getCosmetics(),
+  //     this.category_service.getCategories(),
+  //     this.customer_service.getCustomers(),
+  //     this.order_service.getOrders(),
+  //     this.order_service.searchUncompletedOrder()
+  //   ]).subscribe(
+  //     ([cosmetics, categories, customers, orders, uncompletedOrders]) => {
+  //       this.cosmetics = cosmetics;
+  //       this.categories = categories;
+  //       this.customers = customers;
+  //       this.orders = orders;
+  //       this.uncompletedOrders = uncompletedOrders;
+
+  //       this.createChart();
+  //     },
+  //     error => {
+  //       this.errMessage = error;
+  //     }
+  //   );
+  // }
+
   constructor(
     public _service: AdminCosmeticService,
     public category_service: AdminCategoryService,
@@ -90,13 +142,17 @@ export class AdminHomeComponent {
   createChart() {
     const ctx = this.myChart.nativeElement.getContext('2d');
 
+    // Lấy dữ liệu số lượng sản phẩm của từng category
+    const categoryData = this.getCategoryData();
+    const categoryName = this.getCateName();
+
     const myChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Label 1', 'Label 2', 'Label 3'],
+        labels: categoryData,
         datasets: [{
-          label: 'Dataset 1',
-          data: [10, 20, 30],
+          label: 'Số lượng sản phẩm',
+          data: categoryData,
           backgroundColor: [
             'rgba(255, 99, 132, 0.2)',
             'rgba(54, 162, 235, 0.2)',
@@ -115,13 +171,36 @@ export class AdminHomeComponent {
           yAxes: [{
             ticks: {
               beginAtZero: true
-            } 
+            }
           }]
         }
-      } as any // Cast the entire options object as 'any'
-    });
+      }
+    } as any);
   }
 
+  // Phương thức lấy dữ liệu số lượng sản phẩm của từng category
+  getCategoryData() {
+    const categoryData = [];
+
+    for (const category of this.categories) {
+      // Tính số lượng sản phẩm của category
+      const categoryProductCount = this.cosmetics.filter((cosmetic: { categoryId: any; }) => cosmetic.categoryId === category.id).length;
+      categoryData.push(categoryProductCount);
+    }
+
+    return categoryData;
+  }
+
+  getCateName() {
+    if (this.cosmetics && this.cosmetics.length > 0) {
+      // Lấy mảng tên category từ mảng cosmetics
+      const categoryNames = Array.from(new Set(this.cosmetics.map((cosmetic: { categoryName: any; }) => cosmetic.categoryName)));
+      return categoryNames;
+    } else {
+      // Hoặc bạn có thể xử lý khi không có dữ liệu
+      return [];
+    }
+  }
 
   totalCosmetic(data: any) {
     return this.totalCosmetics = data.length;

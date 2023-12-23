@@ -3,7 +3,6 @@ import { AdminCosmeticService } from '../services/admin-cosmetic.service';
 import { AdminCategoryService } from '../services/admin-category.service';
 import { AdminCustomerService } from '../services/admin-customer.service';
 import { AdminOrderService } from '../services/admin-order.service';
-import { Chart } from 'chart.js/auto';
 import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 
 @Component({
@@ -145,36 +144,36 @@ export class AdminHomeComponent {
     const categoryData = this.getCategoryData();
     const categoryName = this.getCateName();
 
-    const myChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: categoryData,
-        datasets: [{
-          label: 'Số lượng sản phẩm',
-          data: categoryData,
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)'
-          ],
-          borderColor: [
-            'rgba(255,99,132,1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          yAxes: [{
-            ticks: {
-              beginAtZero: true
-            }
-          }]
-        }
-      }
-    } as any);
+    // const myChart = new Chart(ctx, {
+    //   type: 'bar',
+    //   data: {
+    //     labels: categoryData,
+    //     datasets: [{
+    //       label: 'Số lượng sản phẩm',
+    //       data: categoryData,
+    //       backgroundColor: [
+    //         'rgba(255, 99, 132, 0.2)',
+    //         'rgba(54, 162, 235, 0.2)',
+    //         'rgba(255, 206, 86, 0.2)'
+    //       ],
+    //       borderColor: [
+    //         'rgba(255,99,132,1)',
+    //         'rgba(54, 162, 235, 1)',
+    //         'rgba(255, 206, 86, 1)'
+    //       ],
+    //       borderWidth: 1
+    //     }]
+    //   },
+    //   options: {
+    //     scales: {
+    //       yAxes: [{
+    //         ticks: {
+    //           beginAtZero: true
+    //         }
+    //       }]
+    //     }
+    //   }
+    // } as any);
   }
 
   // Phương thức lấy dữ liệu số lượng sản phẩm của từng category

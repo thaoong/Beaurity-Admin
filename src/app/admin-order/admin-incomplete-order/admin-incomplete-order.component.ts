@@ -30,7 +30,6 @@ export class AdminIncompleteOrderComponent {
   }
 
   totalOrder(data: string | any[]) {
-    debugger
     this.value = data
     return this.result = data.length
   }
